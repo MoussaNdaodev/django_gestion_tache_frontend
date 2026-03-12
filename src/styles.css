@@ -1,3 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@layer theme {
+  @theme {
+    --color-primary: #1b8a5a;
+    --color-background-light: #f6f8f7;
+    --color-background-dark: #12201a;
+    --font-display: 'Lexend', sans-serif;
+    --radius-default: 0.25rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-full: 9999px;
+  }
+}
+body {
+  font-family: 'Lexend', sans-serif;
+}

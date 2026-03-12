@@ -1,0 +1,62 @@
+<main class="pt-24 pb-12 px-4">
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-10">
+      <h2 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Tableau de Bord</h2>
+      <p class="text-slate-500 dark:text-slate-400">Bienvenue, voici un aperçu de vos activités académiques.
+      </p>
+    </header>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div
+        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start mb-4">
+          <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Projets</p>
+          <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">folder_open</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ projets()?.length || 0 }}</p>
+      </div>
+      <div
+        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start mb-4">
+          <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Tâches</p>
+          <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">assignment</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ mestaches()?.length || 0 }}</p>
+      </div>
+      <div
+        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start mb-4">
+          <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">En cours</p>
+          <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">pending</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ tachesEnCours()?.length || 0 }}</p>
+        <p class="text-xs text-primary font-medium mt-2">En progression</p>
+      </div>
+      <div
+        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start mb-4">
+          <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Terminées</p>
+          <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">task_alt</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ tachesTerminees()?.length || 0 }}</p>
+      </div>
+    </div>
+    <section class="flex flex-col gap-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Projets récents</h3>
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="flex items-center gap-2 px-4 cursor-pointer py-2 rounded-lg bg-primary text-white text-sm font-medium">
+            <span class="material-symbols-outlined text-lg">filter_list</span>
+            <a routerLink="/projets">Voir tous les projets</a>
+          </button>
+
+        </div>
+      </div>
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        @for (item of projets(); track $index) {
+        <app-minimal-projet-card-component [projet]="item"></app-minimal-projet-card-component>
+        }
+      </div>
+    </section>
+  </div>
+</main>

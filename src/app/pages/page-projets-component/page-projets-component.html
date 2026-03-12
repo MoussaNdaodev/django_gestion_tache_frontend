@@ -1,0 +1,52 @@
+<main class="flex flex-1 justify-center py-8">
+  <div class="layout-content-container flex flex-col max-w-[1200px] flex-1 px-4 md:px-10">
+    <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
+      <div class="flex flex-col gap-1">
+        <h1 class="text-slate-900 dark:text-slate-100 text-4xl font-black leading-tight tracking-tight">
+          Mes Projets</h1>
+        <p class="text-slate-500 dark:text-slate-400 text-base font-normal">Gérez et suivez vos projets
+          académiques en temps réel.</p>
+      </div>
+      <div class="flex gap-3">
+        <button
+          class="flex items-center gap-2 cursor-pointer overflow-hidden rounded-lg h-11 px-6 bg-primary text-white text-sm font-bold transition-transform active:scale-95">
+          <span class="material-symbols-outlined text-lg">add</span>
+          <a routerLink="/projets/creation" class="text-white no-underline">Créer un projet</a>
+        </button>
+      </div>
+    </div>
+    <div class="mb-6">
+      <div class="flex border-b border-primary/10 gap-8">
+        <a class="flex items-center gap-2 border-b-2 border-primary text-primary pb-3 px-1 transition-colors" href="#">
+          <span class="text-sm font-bold tracking-wide">Tous</span>
+          <span class="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full">{{projets().length}}</span>
+        </a>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (item of projets(); track $index) {
+      <app-projet-card-component [projet]="item"></app-projet-card-component>
+      }
+    </div>
+    <div class="flex items-center justify-center mt-12 mb-8">
+      <nav class="flex items-center gap-2">
+        <button (click)="changePage(currentPage() - 1)" [disabled]="currentPage() === 1"
+          class="flex size-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+
+        @for (page of [].constructor(totalPages()); track $index) {
+        <button (click)="changePage($index + 1)" [class.bg-primary]="currentPage() === $index + 1"
+          [class.text-white]="currentPage() === $index + 1"
+          class="flex size-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          {{ $index + 1 }}
+        </button>
+        }
+        <button (click)="changePage(currentPage() + 1)" [disabled]="currentPage() === totalPages()"
+          class="flex size-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+</main>

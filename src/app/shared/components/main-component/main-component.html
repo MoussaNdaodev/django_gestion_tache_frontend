@@ -1,0 +1,150 @@
+<nav class="top-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-b border-primary/10 z-50">
+  <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
+    <div class="flex items-center gap-8">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+          <span class="material-symbols-outlined text-xl">school</span>
+        </div>
+        <h1 class="text-slate-900 dark:text-slate-100 text-sm font-bold leading-tight hidden md:block">
+          ESMT GESTION DE PROJET
+        </h1>
+      </div>
+      <div class="hidden md:flex items-center gap-1">
+        <a class="flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm" routerLink="./acceuil"
+          routerLinkActive="bg-primary/10 text-primary" [routerLinkActiveOptions]="{ exact: true }">
+          <span class="material-symbols-outlined text-lg">dashboard</span>
+          <span>Tableau de bord</span>
+        </a>
+        <a class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors text-sm"
+          routerLink="./projets" routerLinkActive="bg-primary/10 text-primary"
+          [routerLinkActiveOptions]="{ exact: true }">
+          <span class="material-symbols-outlined text-lg">folder</span>
+          <span>Mes projets</span>
+        </a>
+        <a class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors text-sm"
+          routerLink="./mestaches" routerLinkActive="bg-primary/10 text-primary"
+          [routerLinkActiveOptions]="{ exact: true }">
+          <span class="material-symbols-outlined text-lg">check_box</span>
+          <span>Mes tâches</span>
+        </a>
+        <a class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors text-sm"
+          routerLink="./statistiques">
+          <span class="material-symbols-outlined text-lg">bar_chart</span>
+          <span>Statistiques</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <div class="relative">
+        <button (click)="toggleDropdown()"
+          class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative">
+          <span class="material-symbols-outlined text-slate-600 dark:text-slate-400">notifications</span>
+
+          @if (notifService.nonLues() > 0) {
+          <span
+            class="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+            {{ notifService.nonLues() }}
+          </span>
+          }
+        </button>
+
+        @if (ouvert) {
+        <div class="fixed inset-0 z-40" (click)="fermerDropdown()"></div>
+
+        <div
+          class="absolute right-0 top-12 w-80 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden">
+          <div class="flex justify-between items-center px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">
+              Notifications
+              @if (notifService.nonLues() > 0) {
+              <span class="ml-2 px-1.5 py-0.5 bg-red-100 text-red-500 text-[10px] font-bold rounded-full">
+                {{ notifService.nonLues() }} nouvelles
+              </span>
+              }
+            </h3>
+            @if (notifService.nonLues() > 0) {
+            <button (click)="notifService.toutMarquerLues()" class="text-xs text-primary font-semibold hover:underline">
+              Tout lire
+            </button>
+            }
+          </div>
+
+          <div class="max-h-80 overflow-y-auto divide-y divide-slate-50 dark:divide-slate-800">
+            @if (notifService.notifications().length === 0) {
+            <div class="py-10 text-center text-slate-400">
+              <span class="material-symbols-outlined text-4xl block mb-2">notifications_off</span>
+              <p class="text-sm">Aucune notification</p>
+            </div>
+            }
+
+            @for (notif of notifService.notifications(); track notif.id) {
+            <div (click)="notifService.marquerLue(notif.id)"
+              class="flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+              [ngClass]="!notif.est_lu ? 'bg-primary/5' : ''">
+              <div class="mt-0.5 p-2 rounded-full flex-shrink-0" [ngClass]="
+                      !notif.est_lu
+                        ? 'bg-primary/10 text-primary'
+                        : 'bg-slate-100 dark:bg-slate-700 text-slate-400'
+                    ">
+                <span class="material-symbols-outlined text-sm">schedule</span>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-slate-800 dark:text-slate-100">
+                  Rappel d'échéance
+                </p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
+                  {{ notif.message }}
+                </p>
+                <p class="text-[10px] text-slate-400 mt-1">
+                  {{ notif.date_creation | date: 'dd MMM yyyy, HH:mm' }}
+                </p>
+              </div>
+
+              @if (!notif.est_lu) {
+              <div class="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+              }
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+
+      <div class="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-700">
+        <button
+          class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/90 transition-all shadow-sm">
+          <a routerLink="/profil">Mon Profil</a>
+        </button>
+        <div class="size-10 rounded-full bg-slate-200 dark:bg-slate-800 bg-cover bg-center border-2 border-primary/20"
+          [style.backgroundImage]="'url(' + utilisateurConnecte()?.avatar + ')'"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+<router-outlet></router-outlet>
+
+<footer class="px-6 lg:px-20 py-12 border-t border-slate-100 dark:border-slate-800">
+  <div class="max-w-7xl mx-auto flex flex-col px-4 md:flex-row justify-between items-center gap-8">
+    <div class="flex items-center gap-2 text-primary">
+      <div class="size-6 flex items-center justify-center bg-primary rounded text-white">
+        <span class="material-symbols-outlined text-xl">school</span>
+      </div>
+      <h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold tracking-tight">
+        ESMT GESTION DE PROJET
+      </h2>
+    </div>
+    <p class="text-slate-500 text-sm">© 2026 Moussa NDAO. Tous droits réservés.</p>
+    <div class="flex gap-6">
+      <a class="text-slate-400 hover:text-primary transition-colors" target="_blank"
+        href="https://www.instagram.com/ndaomoussa23?igsh=YmF6M2wzNTR6ejhv">
+        <img class="w-[20px]" src="assets/images/instagram.png" alt="" />
+      </a>
+      <a class="text-slate-400 hover:text-primary transition-colors" target="_blank"
+        href="https://www.linkedin.com/in/moussa-ndao-61b1222b7">
+        <img class="w-[20px]" src="assets/images/linkedin.png" alt="" />
+      </a>
+    </div>
+  </div>
+</footer>

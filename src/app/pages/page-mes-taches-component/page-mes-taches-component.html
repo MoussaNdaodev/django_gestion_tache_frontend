@@ -1,0 +1,107 @@
+<main class="flex flex-1 justify-center py-10 px-4 lg:px-40">
+  <div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
+    <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
+      <div class="flex flex-col gap-2">
+        <h1 class="text-slate-900 dark:text-slate-100 text-4xl font-black leading-tight tracking-[-0.033em]">
+          Mes Tâches Personnelles</h1>
+        <p class="text-slate-500 dark:text-slate-400 text-base font-normal">Gérez vos tâches
+          académiques et suivez votre progression en temps réel.</p>
+      </div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-primary/10 overflow-hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-primary/10 overflow-hidden">
+        <div class="border-b border-primary/10 px-6 pt-2">
+          <div class="flex gap-8">
+            <a (click)="changerFiltre('a_faire')"
+              class="cursor-pointer flex flex-col items-center justify-center border-b-2 pb-4 pt-4 px-2 transition-all"
+              [class.border-primary]="filtreStatut() === 'a_faire'" [class.text-primary]="filtreStatut() === 'a_faire'"
+              [class.border-transparent]="filtreStatut() !== 'a_faire'"
+              [class.text-slate-500]="filtreStatut() !== 'a_faire'">
+              <p class="text-sm font-bold tracking-[0.015em]">À faire</p>
+            </a>
+            <a (click)="changerFiltre('en_cours')"
+              class="cursor-pointer flex flex-col items-center justify-center border-b-2 pb-4 pt-4 px-2 transition-all hover:text-primary"
+              [class.border-primary]="filtreStatut() === 'en_cours'"
+              [class.text-primary]="filtreStatut() === 'en_cours'"
+              [class.border-transparent]="filtreStatut() !== 'en_cours'"
+              [class.text-slate-500]="filtreStatut() !== 'en_cours'">
+              <p class="text-sm font-bold tracking-[0.015em]">En cours</p>
+            </a>
+            <a (click)="changerFiltre('termine')"
+              class="cursor-pointer flex flex-col items-center justify-center border-b-2 pb-4 pt-4 px-2 transition-all hover:text-primary"
+              [class.border-primary]="filtreStatut() === 'termine'" [class.text-primary]="filtreStatut() === 'termine'"
+              [class.border-transparent]="filtreStatut() !== 'termine'"
+              [class.text-slate-500]="filtreStatut() !== 'termine'">
+              <p class="text-sm font-bold tracking-[0.015em]">Terminées</p>
+            </a>
+          </div>
+        </div>
+        <div class="p-4 border-b border-primary/5 bg-background-light/50 dark:bg-background-dark/20">
+          <label class="flex flex-col w-full">
+            <div
+              class="flex w-full items-stretch rounded-lg h-11 bg-white dark:bg-slate-800 border border-primary/20 shadow-sm">
+              <div class="text-primary/60 flex items-center justify-center pl-4 rounded-l-lg">
+                <span class="material-symbols-outlined">search</span>
+              </div>
+              <input (input)="rechercher($event)"
+                class="form-input flex w-full min-w-0 flex-1 border-none bg-transparent focus:ring-0 placeholder:text-slate-400 text-slate-900 dark:text-slate-100 px-4 pl-2 text-sm"
+                placeholder="Rechercher une tâche par titre ou projet..." />
+              <button class="px-4 text-primary hover:bg-primary/5 border-l border-primary/10 flex items-center">
+                <span class="material-symbols-outlined text-sm mr-1">tune</span>
+                <span class="text-xs font-bold uppercase tracking-wider">Filtres</span>
+              </button>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="divide-y divide-primary/5">
+        @for (tache of tachesFiltrees(); track tache.id) {
+        <div
+          class="flex flex-col sm:flex-row gap-4 bg-white dark:bg-slate-900 px-6 py-6 hover:bg-primary/5 transition-colors group">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="flex items-center justify-center pt-1">
+              <input class="h-5 w-5 rounded border-primary/30 border-2 bg-transparent text-primary cursor-pointer"
+                type="checkbox" [checked]="tache.statut === 'termine'" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <h3
+                class="text-slate-900 dark:text-slate-100 text-lg font-bold group-hover:text-primary transition-colors">
+                {{ tache.titre }}
+              </h3>
+              <div class="flex flex-wrap items-center gap-y-1 gap-x-4">
+                <span class="flex items-center gap-1.5 text-slate-500 text-sm">
+                  <span class="material-symbols-outlined text-sm text-primary/70">
+                    calendar_today
+                  </span>
+                  Échéance :
+                  {{ tache.date_limite | date:'dd MMM yyyy' }}
+                </span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" [ngClass]="{
+              'bg-red-100 text-red-600': tache.priorite === 'haute',
+              'bg-amber-100 text-amber-600': tache.priorite === 'moyenne',
+              'bg-slate-100 text-slate-600': tache.priorite === 'basse'
+            }">
+                  Priorité {{ tache.priorite }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-end">
+            <select [value]="tache.statut" (change)="changerStatut(tache, $any($event.target).value)"
+              class="form-select rounded-lg border border-primary/20 bg-white dark:bg-slate-800 text-sm font-bold text-primary px-3 py-1.5 hover:border-primary transition-all">
+              <option value="a_faire">À faire</option>
+              <option value="en_cours">En cours</option>
+              <option value="termine">Terminée</option>
+            </select>
+          </div>
+        </div>
+        }
+        @if (tachesFiltrees().length === 0) {
+        <div class="p-10 text-center text-slate-400">
+          Aucune tâche trouvée
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</main>

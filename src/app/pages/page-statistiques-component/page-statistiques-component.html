@@ -1,0 +1,241 @@
+<main class="max-w-[1200px] mx-auto w-full px-4 md:px-10 py-8">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div>
+      <h1 class="text-3xl md:text-4xl font-black tracking-tight">Statistiques et Primes</h1>
+      <p class="text-slate-500 mt-1">
+        Suivi de la performance académique et éligibilité aux bonus.
+      </p>
+    </div>
+    <div class="flex gap-3 items-center">
+      <select
+        class="px-3 py-2 rounded-lg border border-slate-200 text-sm font-semibold bg-white"
+        [value]="anneeSelectionnee()"
+        (change)="changerAnnee(+$any($event.target).value)"
+      >
+        <option [value]="anneeSelectionnee() - 1">{{ anneeSelectionnee() - 1 }}</option>
+        <option [value]="anneeSelectionnee()">{{ anneeSelectionnee() }}</option>
+      </select>
+      <button
+        (click)="recalculer()"
+        class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors"
+      >
+        <span class="material-symbols-outlined text-sm">refresh</span> Recalculer
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center items-center py-20">
+      <span class="material-symbols-outlined animate-spin text-primary text-4xl"
+        >progress_activity</span
+      >
+    </div>
+  }
+
+  @if (!loading() && dashboard()) {
+    <div
+      class="mb-8 p-6 rounded-xl bg-gradient-to-r from-primary to-emerald-700 text-white shadow-lg relative overflow-hidden"
+    >
+      <div class="absolute top-0 right-0 p-4 opacity-10">
+        <span class="material-symbols-outlined text-9xl">workspace_premium</span>
+      </div>
+      <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div>
+          <div class="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full w-fit mb-2">
+            <span class="material-symbols-outlined text-sm">stars</span>
+            <span class="text-xs font-bold uppercase">Programme de Prime Enseignant</span>
+          </div>
+          <h3 class="text-2xl font-bold">Votre Éligibilité aux Primes</h3>
+          <p class="text-white/80 max-w-md mt-1">
+            Taux actuel :
+            <span class="font-black text-xl"
+              >{{ dashboard()?.taux_realisation | number: '1.0-1' }}%</span
+            >
+            — Trimestre {{ dashboard()?.trimestre }} / {{ dashboard()?.annee }}
+          </p>
+          <span
+            class="mt-3 inline-block px-3 py-1 rounded-full text-xs font-bold"
+            [ngClass]="statutPrime().css"
+          >
+            {{ statutPrime().label }}
+          </span>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div
+            class="bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 text-center"
+          >
+            <p class="text-xs uppercase tracking-widest text-white/70 mb-1">Cible 90%+</p>
+            <p class="text-2xl font-black">30.000 <span class="text-sm font-normal">FCFA</span></p>
+          </div>
+          <div
+            class="bg-white/20 backdrop-blur-md p-4 rounded-lg border border-white/30 text-center ring-2 ring-yellow-400/50"
+          >
+            <p class="text-xs uppercase tracking-widest text-white/70 mb-1">Cible 100%</p>
+            <p class="text-2xl font-black">100.000 <span class="text-sm font-normal">FCFA</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+      <div class="flex flex-col gap-3 rounded-xl p-6 bg-white border border-primary/10 shadow-sm">
+        <div class="p-2 bg-primary/10 rounded-lg text-primary w-fit">
+          <span class="material-symbols-outlined">assignment_turned_in</span>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Total Tâches</p>
+        <p class="text-3xl font-bold">{{ dashboard()?.nb_taches_total }}</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-xl p-6 bg-white border border-primary/10 shadow-sm">
+        <div class="p-2 bg-primary/10 rounded-lg text-primary w-fit">
+          <span class="material-symbols-outlined">timer</span>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Terminées dans les délais</p>
+        <p class="text-3xl font-bold">{{ dashboard()?.nb_taches_terminees_delai }}</p>
+      </div>
+      <div class="flex flex-col gap-3 rounded-xl p-6 bg-white border border-primary/10 shadow-sm">
+        <div class="p-2 bg-primary/10 rounded-lg text-primary w-fit">
+          <span class="material-symbols-outlined">check_circle</span>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Taux de Réalisation</p>
+        <p class="text-3xl font-bold">{{ dashboard()?.taux_realisation | number: '1.0-1' }}%</p>
+      </div>
+    </div>
+
+    <div class="mb-6 border-b border-primary/10">
+      <div class="flex gap-8">
+        <button
+          (click)="activeTab.set('trimestriel')"
+          [ngClass]="
+            activeTab() === 'trimestriel'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-slate-500'
+          "
+          class="border-b-2 pb-3 px-1 text-sm font-bold tracking-wide transition-colors"
+        >
+          Vue Trimestrielle
+        </button>
+        <button
+          (click)="activeTab.set('annuel')"
+          [ngClass]="
+            activeTab() === 'annuel'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-slate-500'
+          "
+          class="border-b-2 pb-3 px-1 text-sm font-bold tracking-wide transition-colors"
+        >
+          Vue Annuelle
+        </button>
+      </div>
+    </div>
+
+    @if (activeTab() === 'trimestriel') {
+      <div class="bg-white rounded-xl border border-primary/10 shadow-sm p-6 mb-8">
+        <h3 class="text-base font-bold mb-6">
+          Taux de réalisation par trimestre — {{ anneeSelectionnee() }}
+        </h3>
+        <div class="flex items-end gap-6 h-48 px-4">
+          @for (hauteur of barHeights(); track $index) {
+            <div class="flex flex-col items-center gap-2 flex-1 h-full justify-end">
+              <span class="text-xs font-bold text-slate-500">
+                {{
+                  dashboard()?.historique_trimestriel?.[$index]?.taux_realisation | number: '1.0-1'
+                }}%
+              </span>
+              <div
+                class="w-full rounded-t transition-all"
+                [style.height.%]="hauteur || 2"
+                [ngClass]="$index + 1 === dashboard()?.trimestre ? 'bg-primary' : 'bg-primary/30'"
+              ></div>
+              <p
+                class="text-xs font-bold"
+                [ngClass]="
+                  $index + 1 === dashboard()?.trimestre ? 'text-primary' : 'text-slate-400'
+                "
+              >
+                T{{ $index + 1 }}
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (activeTab() === 'annuel') {
+      <div class="bg-white rounded-xl border border-primary/10 shadow-sm p-6 mb-8 overflow-x-auto">
+        <h3 class="text-base font-bold mb-4">Détail par trimestre — {{ anneeSelectionnee() }}</h3>
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="text-slate-400 text-xs uppercase border-b border-primary/5">
+              <th class="pb-3 font-bold">Période</th>
+              <th class="pb-3 font-bold">Tâches Total</th>
+              <th class="pb-3 font-bold">Dans les délais</th>
+              <th class="pb-3 font-bold">Taux</th>
+              <th class="pb-3 font-bold text-right">Prime</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-primary/5">
+            @for (stat of dashboard()?.historique_trimestriel; track stat.trimestre) {
+              <tr class="hover:bg-slate-50 transition-colors">
+                <td class="py-3 font-semibold">{{ getTrimestrelabel(stat.trimestre) }}</td>
+                <td class="py-3">{{ stat.nb_taches_total }}</td>
+                <td class="py-3">{{ stat.nb_taches_terminees_delai }}</td>
+                <td
+                  class="py-3 font-bold"
+                  [ngClass]="
+                    stat.taux_realisation >= 90
+                      ? 'text-emerald-600'
+                      : stat.taux_realisation >= 70
+                        ? 'text-amber-500'
+                        : 'text-red-500'
+                  "
+                >
+                  {{ stat.taux_realisation | number: '1.0-1' }}%
+                </td>
+                <td class="py-3 text-right">
+                  @if (dashboard()?.primes | primeParTrimestre: stat.trimestre) {
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-bold">
+                      {{
+                        (dashboard()?.primes | primeParTrimestre: stat.trimestre)?.montant | number
+                      }}
+                      FCFA
+                    </span>
+                  } @else {
+                    <span class="px-2 py-1 bg-slate-100 text-slate-400 rounded text-xs font-bold"
+                      >—</span
+                    >
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (dashboard()?.primes?.length) {
+      <div class="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
+        <h3 class="text-base font-bold mb-4">Primes attribuées</h3>
+        <div class="space-y-3">
+          @for (prime of dashboard()?.primes; track prime.id) {
+            <div
+              class="flex items-center justify-between p-3 rounded-lg bg-emerald-50 border border-emerald-100"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-yellow-500">workspace_premium</span>
+                <div>
+                  <p class="font-semibold text-sm">
+                    Prime {{ prime.type_prime }} — T{{ prime.trimestre }} {{ prime.annee }}
+                  </p>
+                  <p class="text-xs text-slate-500">
+                    Attribuée le {{ prime.date_attribution | date: 'dd MMM yyyy' }}
+                  </p>
+                </div>
+              </div>
+              <span class="font-black text-primary">{{ prime.montant | number }} FCFA</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</main>

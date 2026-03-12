@@ -1,0 +1,136 @@
+<main class="flex flex-1 justify-center py-8 px-4 md:px-10 lg:px-40">
+  <div
+    class="layout-content-container flex flex-col max-w-[800px] flex-1 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-primary/5 p-6 md:p-10">
+    <!-- Breadcrumbs -->
+    <nav class="flex flex-wrap gap-2 mb-6 items-center">
+      <a class="text-primary/70 hover:text-primary text-sm font-medium flex items-center gap-1" routerLink="/acceuil">
+        <span class="material-symbols-outlined text-sm">home</span> Accueil
+      </a>
+      <span class="text-primary/30 text-sm">/</span>
+      <a class="text-primary/70 hover:text-primary text-sm font-medium" routerLink="/projets">Projets</a>
+      <span class="text-primary/30 text-sm">/</span>
+      <span class="text-slate-900 dark:text-slate-100 text-sm font-semibold">Ajouter une Tâche</span>
+    </nav>
+    <!-- Header Section -->
+    <div class="mb-8">
+      <h1 class="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight tracking-tight">
+        Ajouter une Tâche</h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-2 text-base">
+        Remplissez les informations ci-dessous pour créer une nouvelle tâche pour votre projet
+        académique.
+      </p>
+    </div>
+    <!-- Form -->
+    <form class="space-y-6" #monform="ngForm" (ngSubmit)="creerTache(monform)">
+      <!-- message erreur -->
+      @if (erreur()) {
+      <div class="p-4 rounded-lg bg-red-100 text-red-700 text-sm">
+        {{ erreur() }}
+      </div>
+      }
+      <!-- Title Field -->
+      <div class="flex flex-col gap-2">
+        <label class="text-slate-900 dark:text-slate-100 text-sm font-semibold">Titre de la
+          tâche</label>
+        <input
+          class="form-input w-full rounded-lg text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border-primary/20 bg-primary/5 focus:border-primary h-12 px-4 text-base transition-all"
+          placeholder="Ex: Analyse des données préliminaires" name="titre" type="text" required
+          [(ngModel)]="tache().titre" #titre="ngModel" />
+        @if (titre.invalid && titre.touched) {
+        <span class="text-red-500 text-sm">
+          Le titre est obligatoire
+        </span>
+        }
+      </div>
+      <!-- Description Field -->
+      <div class="flex flex-col gap-2">
+        <label class="text-slate-900 dark:text-slate-100 text-sm font-semibold">Description</label>
+        <textarea
+          class="form-input w-full rounded-lg text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border-primary/20 bg-primary/5 focus:border-primary min-h-[120px] p-4 text-base transition-all"
+          placeholder="Décrivez les objectifs, les livrables attendus et les étapes clés..." name="description" required
+          [(ngModel)]="tache().description" #description="ngModel"></textarea>
+        @if (description.invalid && description.touched) {
+        <span class="text-red-500 text-sm">
+          La description est obligatoire
+        </span>
+        }
+
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Due Date -->
+        <div class="flex flex-col gap-2">
+          <label class="text-slate-900 dark:text-slate-100 text-sm font-semibold">Date
+            limite</label>
+          <div class="relative">
+            <span
+              class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/60">calendar_today</span>
+            <input
+              class="form-input w-full rounded-lg text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border-primary/20 bg-primary/5 focus:border-primary h-12 pl-10 pr-4 text-base transition-all"
+              type="date" name="date_limite" required [(ngModel)]="tache().date_limite" #date_limite="ngModel" />
+          </div>
+          @if (date_limite.invalid && date_limite.touched) {
+          <span class="text-red-500 text-sm">
+            La description est obligatoire
+          </span>
+          }
+        </div>
+        <!-- Priority -->
+        <div class="flex flex-col gap-2">
+          <label class="text-slate-900 dark:text-slate-100 text-sm font-semibold">Priorité</label>
+          <div class="relative">
+            <span
+              class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/60">priority_high</span>
+            <select
+              class="form-select w-full rounded-lg text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border-primary/20 bg-primary/5 focus:border-primary h-12 pl-10 pr-4 text-base transition-all appearance-none"
+              name="priorite" required [(ngModel)]="tache().priorite">
+              <option value="basse">Basse</option>
+              <option selected="" value="moyenne">Moyenne</option>
+              <option value="haute">Haute</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- Assignation -->
+      <div class="flex flex-col gap-2">
+        <label class="text-slate-900 dark:text-slate-100 text-sm font-semibold">
+          Assignation (Membres de l'équipe)
+        </label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/60">
+            group
+          </span>
+          <select name="assigne_a" [(ngModel)]="tache().assigne_a"
+            class="form-select w-full rounded-lg text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border-primary/20 bg-primary/5 focus:border-primary h-12 pl-10 pr-4 text-base transition-all appearance-none">
+            <option value="" disabled selected>
+              Choisir un membre de l'équipe
+            </option>
+            @if (utilisateurs()) {
+            @for (user of utilisateurs(); track user.id) {
+            <option [value]="user.id">
+              {{ user.prenom }} {{ user.nom }} ({{ user.role }})
+            </option>
+            }
+            }
+          </select>
+        </div>
+        <p class="text-xs text-primary/60 mt-1">
+          Seuls les membres actifs de ce projet sont listés.
+        </p>
+      </div>
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-end gap-4 pt-6 border-t border-primary/10 mt-4">
+        <button
+          class="px-6 h-12 rounded-lg text-slate-600 dark:text-slate-400 font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          type="button">
+          Annuler
+        </button>
+        <button
+          class="bg-primary text-white px-8 h-12 rounded-lg font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+          type="submit">
+          <span class="material-symbols-outlined">add_task</span>
+          Créer la tâche
+        </button>
+      </div>
+    </form>
+  </div>
+</main>

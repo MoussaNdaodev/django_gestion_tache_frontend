@@ -1,0 +1,23 @@
+<div
+  class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-primary/10 shadow-sm flex flex-col sm:flex-row gap-5 hover:border-primary/30 transition-colors">
+  <div class="w-full sm:w-32 h-32 rounded-lg bg-primary/5 overflow-hidden flex-shrink-0">
+    <img alt="Projet Web Development" class="w-full h-full object-cover"
+      [src]="projet()?.images || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDe6YEpk8Jd2xV2w6PCx2B9ZSddzHLfT52TcNcSkLHxXFwdF7ngPT6pKOpjpBkupGmZ6ck_nAUrxUK3ePXxskXEGB-8j1h1c8IWSroFpdkjPJR4saq1aNo2exJUlaqHy7I3ebfG0Y5wIOmSOLzhSLVwYlYA060uKPrK2CiDLpjiDD4rSzDUT7EVwEX7VvzIRVMO5p3yvlzK-LRmUW1QEZ9RMisrBCfEyEGB06sm_lJ9Q3Rs1LkiHSHAgXgept-hGO7eiLoSyY7q4Tg'" />
+  </div>
+  <div class="flex-1 flex flex-col justify-between">
+    <div>
+      <div class="flex justify-between items-start mb-1">
+        <h4 class="font-bold text-slate-900 dark:text-slate-100">{{ projet()?.titre }}</h4>
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">{{ projet()?.description }}</p>
+      <div class="flex items-center gap-2 mb-4">
+    </div>
+    <div class="flex items-center float-end justify-between">
+      <button
+        class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-all">
+        <span class="material-symbols-outlined text-lg">visibility</span>
+        <a routerLink="/projets/{{ projet()?.id }}">Voir le projet</a>
+      </button>
+    </div>
+  </div>
+</div>

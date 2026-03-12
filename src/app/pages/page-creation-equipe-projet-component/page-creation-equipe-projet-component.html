@@ -1,0 +1,129 @@
+<main class="flex-1 max-w-3xl mx-auto w-full px-6 py-12">
+  <div class="mb-10">
+    <h2 class="text-3xl font-black text-accent-green dark:text-slate-100 mb-2">
+      Ajouter une Équipe
+    </h2>
+
+    <p class="text-slate-500 dark:text-slate-400">
+      Configurez votre nouvelle équipe de travail et assignez-la
+      à un projet académique existant.
+    </p>
+  </div>
+  <form class="space-y-10" (ngSubmit)="creerEquipe()">
+    <!-- Nom équipe -->
+    <section class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="flex flex-col gap-2">
+
+          <label class="text-sm font-bold text-accent-green dark:text-slate-200">
+            Nom de l'équipe
+          </label>
+
+          <input
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-primary outline-none transition-all"
+            placeholder="ex: Groupe de Recherche Alpha" type="text" [(ngModel)]="equipe().nom_equipe"
+            name="nom_equipe" />
+        </div>
+        <!-- Projet associé -->
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-bold text-accent-green dark:text-slate-200">
+            Projet associé
+          </label>
+          @if(projet()) {
+          <select
+            class="custom-select w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+            <option [value]="projet()?.id" selected>
+              {{ projet()?.titre }}
+            </option>
+          </select>
+          }
+        </div>
+      </div>
+    </section>
+    <hr class="border-slate-200 dark:border-slate-800" />
+    <!-- Membres -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-bold text-accent-green dark:text-slate-100">
+          Ajouter des membres
+        </h3>
+        <span class="text-xs font-semibold px-2 py-1 bg-primary/20 text-accent-green rounded-full">
+          {{ equipe().membres.length }} membres sélectionnés
+        </span>
+      </div>
+      <!-- Recherche de Membre particulier juste au cas ou on a plusieurs utiisateurs ou si on veut trouver un utilisateur spécifique -->
+      <div class="relative group">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+          search
+        </span>
+        <input
+          class="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
+          placeholder="Rechercher un étudiant ou professeur..." type="text" [ngModel]="recherche()"
+          (ngModelChange)="recherche.set($event)" name="recherche" />
+      </div>
+      <!-- Liste utilisateurs -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 divide-y overflow-hidden shadow-sm">
+        @if(utilisateurs()) {
+        @for(user of utilisateurs(); track user.id) {
+        <!--  Classe conditionnelle selon si membre ajouté ou non -->
+        <div class="p-4 flex items-center justify-between transition-colors" [class.bg-green-50]="estMembre(user.id)"
+          [class.dark:bg-green-900/10]="estMembre(user.id)" [class.hover:bg-slate-50]="!estMembre(user.id)">
+          <div class="flex items-center gap-3">
+            <!-- Avatar avec badge ✅ si ajouté -->
+            <div class="relative w-10 h-10">
+              <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden border"
+                [class.border-green-400]="estMembre(user.id)" [class.border-2]="estMembre(user.id)">
+                @if(user.avatar) {
+                <img [src]="user.avatar" class="w-full h-full object-cover" />
+                } @else {
+                <span class="material-symbols-outlined text-primary">person</span>
+                }
+              </div>
+              <!--  Badge vert si membre ajouté -->
+              @if(estMembre(user.id)) {
+              <span
+                class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined text-white" style="font-size: 11px">check</span>
+              </span>
+              }
+            </div>
+            <div>
+              <p class="font-semibold text-slate-800 dark:text-slate-200" [class.text-green-700]="estMembre(user.id)"
+                [class.dark:text-green-400]="estMembre(user.id)">
+                {{ user.nom }} {{ user.prenom }}
+              </p>
+              <p class="text-xs text-slate-500">{{ user.email }}</p>
+            </div>
+          </div>
+          <!--  Affiche ADD ou DELETE selon l'état -->
+          @if(!estMembre(user.id)) {
+          <button class="p-2 rounded-lg text-primary hover:bg-green-100 hover:text-green-600 transition-colors"
+            type="button" (click)="ajouterMembre(user)" title="Ajouter">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+          } @else {
+          <button class="p-2 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors" type="button"
+            (click)="supprimerMembre(user.id)" title="Retirer">
+            <span class="material-symbols-outlined">remove</span>
+          </button>
+          }
+        </div>
+        }
+        }
+      </div>
+      <!-- Boutons -->
+      <div class="pt-6 flex flex-col md:flex-row gap-4 items-center justify-end">
+        <button class="w-full md:w-auto px-8 py-3.5 rounded-xl font-bold text-slate-600 hover:bg-slate-100"
+          type="button">
+          Annuler
+        </button>
+        <button
+          class="w-full md:w-auto px-10 py-3.5 bg-primary text-accent-green font-bold rounded-xl shadow-lg hover:-translate-y-0.5 transition-all"
+          type="submit">
+          Enregistrer l'équipe
+        </button>
+      </div>
+      </section>
+  </form>
+</main>
