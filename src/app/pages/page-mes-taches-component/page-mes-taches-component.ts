@@ -58,7 +58,7 @@ export class PageMesTachesComponent implements OnInit, OnDestroy {
     const nouveauStatut = statut as 'a_faire' | 'en_cours' | 'termine';
 
     this.http
-      .patch(`http://localhost:8000/api/taches/${tache.id}/changer-statut/`, {
+      .patch(`https://moussandao.pythonanywhere.com/api/taches/${tache.id}/changer-statut/`, {
         statut: nouveauStatut,
       })
       .subscribe({
