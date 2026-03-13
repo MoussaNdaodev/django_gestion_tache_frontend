@@ -8,7 +8,8 @@ import { Observable } from 'rxjs';
 export class ApiService {
   private http = inject(HttpClient);
 
-  private baseUrl = 'https://moussandao.pythonanywhere.com/api/';
+  // private baseUrl = 'https://moussandao.pythonanywhere.com/api/';
+  private baseUrl = 'http://localhost:8000/api';
 
   public get<T>(endPoint: string): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}${endPoint}`);
